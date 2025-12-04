@@ -212,6 +212,80 @@ body, .container {
 
 
 
+<!-- نوار پایینی تبلیغاتی -->
+<div class="bottom-bar">
+  <div class="ticker">
+    <div class="messages" id="tickerMessages">
+      <!-- پیام‌ها را اینجا اضافه کنید -->
+      <span>🎉 پیام اول: خوش آمدید به تیوانا!</span>
+      <span>🚀 پیام دوم: اپلیکیشن ما همیشه بروز است!</span>
+      <span>✨ پیام سوم: اخبار و تخفیفات ویژه این هفته!</span>
+    </div>
+  </div>
+</div>
+
+<style>
+/* --- نوار پایینی ثابت بدون دخالت در کادر اصلی --- */
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(135deg, #ffb74d, #f57c00);
+    padding: 8px 20px;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.2);
+    z-index: 9999;
+    pointer-events: none; /* کلیک‌ها روی کادر اصلی تاثیر نگذارد */
+}
+
+/* --- نوار داخلی برای حرکت پیام‌ها --- */
+.ticker {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    height: 28px;  /* ارتفاع نوار متن */
+    pointer-events: auto; /* فقط روی متن فعال باشد */
+}
+
+/* --- محتوای پیام‌ها --- */
+.messages {
+    display: flex;
+    white-space: nowrap;
+    position: absolute;
+    left: 100%;   /* شروع از خارج صفحه */
+    animation: tickerAnim 20s linear infinite;
+}
+
+.messages span {
+    display: inline-block;
+    margin-right: 50px; /* فاصله بین پیام‌ها */
+    font-weight: bold;
+    color: #fff;
+    font-size: 15px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+/* --- انیمیشن حرکت --- */
+@keyframes tickerAnim {
+    0% { left: 100%; }
+    100% { left: -100%; }
+}
+</style>
+
+<script>
+// --- اضافه کردن پیام جدید دینامیک ---
+function addTickerMessage(msg){
+    const ticker = document.getElementById('tickerMessages');
+    const span = document.createElement('span');
+    span.textContent = msg;
+    ticker.appendChild(span);
+}
+</script>
+
+
+
+
+  
 
 
 
