@@ -286,86 +286,76 @@ function addTickerMessage(msg){
 
 
 <script>
-/*
-  نسخه ULTRA DRY UI با فیت دقیق بر اساس سایز صفحه به اینچ
-  تمام کادرها و المان‌ها خشک، بدون انیمیشن و لگ
-*/
-
 (function(){
-  const cfg = {
-    selectors: ['.container', '#app', 'main', 'body']
-  };
+    const container = document.querySelector(".container");
+    if(!container) return;
 
-  function findRoot(){
-    for (const s of cfg.selectors){
-      const el = document.querySelector(s);
-      if (el) return el;
+    // ابعاد اصلی برنامه
+    const BASE_WIDTH = 480;
+    const BASE_HEIGHT = 650;
+
+    function getScreenInches(){
+        const w = window.screen.width;
+        const h = window.screen.height;
+        const diagonalPx = Math.sqrt(w*w + h*h);
+        const dpi = 160; // فرض dpi متوسط
+        return diagonalPx / dpi;
     }
-    return document.body;
-  }
 
-  const box = findRoot();
-  box.style.transformOrigin = "top center";
-  box.style.transition = "none";
+    function applyScale(){
+        const inch = getScreenInches();
+        let scale = 1;
 
-  // محاسبه اندازه صفحه به اینچ تقریبی
-  function getScreenInch(){
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    const dpi = window.devicePixelRatio * 96; // تقریب
-    const widthInch = w / dpi;
-    const heightInch = h / dpi;
-    const diag = Math.sqrt(widthInch**2 + heightInch**2);
-    return diag;
-  }
+        // ---- گوشی‌های کوچک ----
+        if(inch <= 4.0) scale = 0.88;       // 4.0"
+        else if(inch <= 4.3) scale = 0.92;  // 4.3"
+        else if(inch <= 4.5) scale = 0.95;  // 4.5"
+        else if(inch <= 4.7) scale = 0.98;  // 4.7"
+        else if(inch <= 5.0) scale = 1.02;  // 5.0"
+        else if(inch <= 5.3) scale = 1.06;  // 5.3"
+        else if(inch <= 5.5) scale = 1.09;  // 5.5"
+        else if(inch <= 6.0) scale = 1.14;  // 6.0"
+        else if(inch <= 6.3) scale = 1.18;  // 6.3"
+        else if(inch <= 6.5) scale = 1.22;  // 6.5"
+        else if(inch <= 7.0) scale = 1.27;  // 7.0"
 
-  function calcScaleByInch(){
-    const inch = getScreenInch();
-    let scale = 1;
+        // ---- تبلت‌ها ----
+        else if(inch <= 8.0) scale = 1.33;  // 8"
+        else if(inch <= 8.5) scale = 1.36;  // 8.5"
+        else if(inch <= 9.0) scale = 1.39;  // 9"
+        else if(inch <= 9.5) scale = 1.42;  // 9.5"
+        else if(inch <= 10.0) scale = 1.46; // 10"
+        else if(inch <= 10.5) scale = 1.49; // 10.5"
+        else if(inch <= 11.0) scale = 1.53; // 11"
+        else if(inch <= 11.5) scale = 1.56; // 11.5"
+        else if(inch <= 12.0) scale = 1.60; // 12"
 
-    // ---- گوشی‌های کوچک ----
-    if (inch <= 4.0) scale = 0.89;      // 4.0"
-    else if (inch <= 4.5) scale = 0.96; // 4.5"
-    else if (inch <= 5.0) scale = 1.02; // 5.0"
-    else if (inch <= 5.5) scale = 1.09; // 5.5"
-    else if (inch <= 6.0) scale = 1.16; // 6.0"
-    else if (inch <= 6.5) scale = 1.22; // 6.5"
-    else if (inch <= 7.0) scale = 1.29; // 7.0"
+        // ---- لپتاپ/مانیتور ----
+        else if(inch <= 13.0) scale = 1.67; // 13"
+        else if(inch <= 14.0) scale = 1.74; // 14"
+        else if(inch <= 15.0) scale = 1.81; // 15"
+        else if(inch <= 15.6) scale = 1.85; // 15.6"
 
-    // ---- تبلت‌ها ----
-    else if (inch <= 8.0) scale = 1.36;  // 8"
-    else if (inch <= 9.0) scale = 1.41;  // 9"
-    else if (inch <= 10.0) scale = 1.47; // 10"
-    else if (inch <= 11.0) scale = 1.54; // 11"
-    else if (inch <= 12.0) scale = 1.61; // 12"
+        // خیلی بزرگ‌تر از 15.6 اینچ
+        else scale = 1.90;
 
-    // ---- لپتاپ/مانیتور ----
-    else if (inch <= 13.0) scale = 1.67; // 13"
-    else if (inch <= 14.0) scale = 1.74; // 14"
-    else if (inch <= 15.0) scale = 1.81; // 15"
+        // اعمال به container
+        container.style.transform = `scale(${scale})`;
+        container.style.transformOrigin = "top center";
+        container.style.width = `${BASE_WIDTH}px`;
+        container.style.height = `${BASE_HEIGHT}px`;
+    }
 
-    // ---- خیلی بزرگ‌تر از 15 اینچ ----
-    else scale = 1.89;
-
-    return scale;
-  }
-
-  function applyScale(){
-    const sc = calcScaleByInch();
-    box.style.transform = `scale(${sc})`;
-  }
-
-  window.addEventListener("load", applyScale);
-  window.addEventListener("resize", applyScale);
-  window.addEventListener("orientationchange", applyScale);
-
-  // بازگشت به حالت اصلی
-  window.resetDryUI = function(){
-    box.style.transform = "scale(1)";
-  };
+    // اجرا هنگام لود و تغییر اندازه
+    window.addEventListener("load", applyScale);
+    window.addEventListener("resize", applyScale);
+    window.addEventListener("orientationchange", applyScale);
 
 })();
 </script>
+
+
+
 
 
 
