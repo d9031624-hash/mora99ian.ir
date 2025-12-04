@@ -206,35 +206,42 @@ body, .container {
 
 
 
-
-<!-- دکمه برای تست تکان دادن -->
-<button onclick="shakeApp()">تکان بده</button>
-
 <script>
-// تابع تکان دادن برنامه
-function shakeApp() {
+(function(){
     const container = document.querySelector('.container');
     if (!container) return;
 
-    container.style.transition = 'transform 0.05s'; // حرکت سریع و خشک
-    const shakes = [
-        'translateX(-10px)',
-        'translateX(10px)',
-        'translateX(-8px)',
-        'translateX(8px)',
-        'translateX(-5px)',
-        'translateX(5px)',
-        'translateX(0px)'
-    ];
+    const shakeDistance = 10; // حداکثر تکان به px
+    const shakeDuration = 300; // مدت زمان کل تکان به میلی‌ثانیه
+    const shakeFPS = 60; // فریم در ثانیه
 
-    let i = 0;
-    const interval = setInterval(() => {
-        container.style.transform = shakes[i];
-        i++;
-        if (i >= shakes.length) clearInterval(interval);
-    }, 50); // 50 میلی‌ثانیه برای هر مرحله
-}
+    function shake() {
+        let start = null;
+        const originalTransform = container.style.transform || '';
+
+        function step(timestamp) {
+            if (!start) start = timestamp;
+            const elapsed = timestamp - start;
+            const progress = elapsed / shakeDuration;
+
+            // محاسبه حرکت خشک با تابع مثلثی (zig-zag)
+            const angle = progress * Math.PI * 6; // 3 دوره کامل
+            const offset = Math.sin(angle) * shakeDistance;
+
+            container.style.transform = `translateX(${offset}px)`;
+
+            if (progress < 1) requestAnimationFrame(step);
+            else container.style.transform = originalTransform; // بازگشت دقیق
+        }
+
+        requestAnimationFrame(step);
+    }
+
+    // اجرای تکان هر 5 ثانیه (می‌توان تغییر داد)
+    setInterval(shake, 5000);
+})();
 </script>
+
 
 
 
