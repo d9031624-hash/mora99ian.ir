@@ -208,6 +208,34 @@ body, .container {
 
 
 
+<!-- دکمه برای تست تکان دادن -->
+<button onclick="shakeApp()">تکان بده</button>
+
+<script>
+// تابع تکان دادن برنامه
+function shakeApp() {
+    const container = document.querySelector('.container');
+    if (!container) return;
+
+    container.style.transition = 'transform 0.05s'; // حرکت سریع و خشک
+    const shakes = [
+        'translateX(-10px)',
+        'translateX(10px)',
+        'translateX(-8px)',
+        'translateX(8px)',
+        'translateX(-5px)',
+        'translateX(5px)',
+        'translateX(0px)'
+    ];
+
+    let i = 0;
+    const interval = setInterval(() => {
+        container.style.transform = shakes[i];
+        i++;
+        if (i >= shakes.length) clearInterval(interval);
+    }, 50); // 50 میلی‌ثانیه برای هر مرحله
+}
+</script>
 
 
 
