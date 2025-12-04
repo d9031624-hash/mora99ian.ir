@@ -46,9 +46,20 @@ body {
 }
 .header-buttons button:hover { transform: translateY(-3px) scale(1.02); }
 
-/* --- فونت نستعلیق برای عنوان --- */
+/* --- فونت نستعلیق گرافیکی و بولد برای عنوان --- */
 @import url('https://cdn.fontcdn.ir/Font/Persian/IranNastaliq/IranNastaliq.css');
-h2 { text-align:center; font-family: 'IranNastaliq', serif !important; font-size:46px; font-weight:normal; color:#000; -webkit-text-stroke:1px #fff; margin:18px 0 8px 0; }
+
+h2 {
+    text-align: center;
+    font-family: 'IranNastaliq', serif !important;
+    font-size: 50px;              /* کمی بزرگتر */
+    font-weight: 900;             /* بسیار کلفت و بولد */
+    color: #000;                  /* مشکی واضح */
+    -webkit-text-stroke: 1.5px #fff; /* حاشیه سفید ضخیم‌تر */
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3); /* سایه ملایم برای عمق */
+    margin: 20px 0 10px 0;
+    letter-spacing: 1px;          /* کمی فاصله بین حروف */
+}
 
 /* --- ورودی و دکمه‌ها --- */
 .controls { display:flex; gap:10px; margin-top:6px; align-items:center; }
@@ -108,7 +119,6 @@ input::selection { background: transparent; }
   <div class="controls" aria-hidden="false">
     <input id="q" type="text" placeholder="کلمه یا عبارت را وارد کنید" aria-label="جستجو">
     <button id="searchBtn" class="btn search">جستجو</button>
-    <button id="randomBtn" class="btn random">تصادفی</button>
   </div>
 
   <div class="section">
