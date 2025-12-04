@@ -286,6 +286,70 @@ function addTickerMessage(msg){
 
 
 
+<script>
+/*
+  نسخه ULTRA DRY UI
+  تمام کادرها و المان‌ها خشک، بدون انیمیشن و لگ
+  مقیاس خودکار با اندازه صفحه
+*/
+
+(function(){
+  const cfg = {
+    baseWidth: 480,
+    baseHeight: 650,
+    minScale: 0.85,
+    maxScale: 1.25,
+    selectors: ['.container', '#app', 'main', 'body']
+  };
+
+  function findRoot(){
+    for (const s of cfg.selectors){
+      const el = document.querySelector(s);
+      if (el) return el;
+    }
+    return document.body;
+  }
+
+  const box = findRoot();
+  box.style.transformOrigin = "top center"; // مرکز بالا
+  box.style.transition = "none"; // بدون انیمیشن
+
+  function calcScale(){
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+    let scaleW = W / cfg.baseWidth;
+    let scaleH = H / cfg.baseHeight;
+
+    // انتخاب کوچک‌ترین برای فیت کامل
+    let scale = Math.min(scaleW, scaleH);
+
+    // محدودیت
+    scale = Math.max(cfg.minScale, Math.min(cfg.maxScale, scale));
+    return scale;
+  }
+
+  function applyScale(){
+    const sc = calcScale();
+    box.style.transform = `scale(${sc})`;
+  }
+
+  // اعمال اولیه و هنگام تغییر سایز
+  window.addEventListener("load", applyScale);
+  window.addEventListener("resize", applyScale);
+  window.addEventListener("orientationchange", applyScale);
+
+  // تابع بازگشت به حالت اولیه
+  window.resetDryUI = function(){
+    box.style.transform = "scale(1)";
+  };
+})();
+</script>
+
+
+
+  
+
+
 
 <!-- مودال بزرگ -->
 <div id="modal" role="dialog" aria-modal="true" style="display:none;">
