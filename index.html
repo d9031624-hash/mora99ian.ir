@@ -325,7 +325,33 @@ const resultEl = document.getElementById('result');
 const modal = document.getElementById('modal');
 const modalContent = document.getElementById('modalContent');
 
+/* تاریخچه از localStorage */
+let historyList = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+/* ====== کمک‌کننده‌ها ====== */
+function renderHistory() {
+  historyEl.innerHTML = '';
+  if (!historyList.length) {
+    historyEl.innerHTML = '<div class="small">تاریخچه خالی است</div>';
+    return;
+  }
+  // دکمه پاک کردن
+  const clearBtn = document.createElement('div');
+  clearBtn.innerHTML = '<strong class="small">پاک کردن تاریخچه</strong>';
+  clearBtn.style.textAlign = 'center';
+  clearBtn.style.cursor = 'pointer';
+  clearBtn.onclick = () => { historyList = []; localStorage.removeItem('searchHistory'); renderHistory(); };
+  historyEl.appendChild(clearBtn);
 
+  historyList.forEach(item => {
+    const d = document.createElement('div');
+    d.textContent = item;
+    d.onclick = () => { qInput.value = item; searchAndShow(item); };
+    historyEl.appendChild(d);
+  });
+}
+
+function saveHistory(term) {
+  if (!term) return;
   // حذف موارد تکراری و اضافه به اول
   historyList = historyList.filter(x => x !== term);
   historyList.unshift(term);
@@ -577,7 +603,6 @@ else scale = 1.90;
 
 })();
 </script>
-
 
 
 
