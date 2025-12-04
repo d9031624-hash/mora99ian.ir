@@ -99,7 +99,7 @@ input::selection { background: transparent; }
 <body>
 <div class="container" role="application" aria-label="لغت‌نامه اپلیکیشن">
   <div class="header-buttons" role="navigation">
-    <button onclick="goHome()">ریست</button>
+    <button onclick="goHome()">ننننننننن</button>
     <button onclick="openAbout()">درباره</button>
   </div>
 
@@ -390,20 +390,18 @@ document.addEventListener('touchmove', e => { if (e.scale && e.scale !== 1) e.pr
 
 <script>
 /*
-  نسخه ULTRA FULLSCREEN
-  بسیار بزرگ – تا 2.5 برابر – مخصوص پوشش کامل صفحه موبایل و تبلت
+  نسخه SMART FIT FULLSCREEN
+  فقط اندازه را طبق صفحه گوشی/تبلت تنظیم می‌کند
+  بدون بزرگ‌نمایی اضافی – دقیقاً فیت صفحه
 */
 
 (function(){
   const cfg = {
     baseWidth: 380,
     baseHeight: 640,
-    minScale: 1.10,       // حداقل بزرگ‌تر از حالت عادی
-    maxScale: 2.50,       // اجازه رشد تا ۲.۵ برابر
-    phoneBoost: 1.40,     // گوشی‌ها ۴۰٪ بزرگ‌تر
-    tabletBoost: 1.30,    // تبلت‌ها ۳۰٪ بزرگ‌تر
-    desktopBoost: 1.10,
-    animMs: 200,
+    minScale: 1.0,
+    maxScale: 1.40,        // فقط کمی اجازه رشد برای فیت دقیق صفحه
+    animMs: 180,
     selectors: ['#app','.container','#container','main','body']
   };
 
@@ -417,34 +415,20 @@ document.addEventListener('touchmove', e => { if (e.scale && e.scale !== 1) e.pr
 
   const box = findRoot();
   box.style.transformOrigin = "top center";
-  box.style.transition = `transform ${cfg.animMs}ms ease`;
-
-  function deviceType(){
-    const ua = navigator.userAgent.toLowerCase();
-    const w = window.innerWidth;
-
-    if (w < 620 || /mobi|android|iphone/.test(ua)) return "phone";
-    if (w < 1200) return "tablet";
-    return "desktop";
-  }
+  box.style.transition = `transform ${cfg.animMs}ms ease-out`;
 
   function calcScale(){
     const W = window.innerWidth;
     const H = window.innerHeight;
 
+    // محاسبه دقیق برای فیت شدن
     let scaleW = W / cfg.baseWidth;
     let scaleH = H / cfg.baseHeight;
 
-    // همیشه بزرگ‌ترین مقیاس را انتخاب می‌کنیم (برای FULL COVER)
-    let scale = Math.max(scaleW, scaleH);
+    // کوچک‌ترین مقیاس → باعث می‌شود محتوا دقیقا در صفحه جا شود
+    let scale = Math.min(scaleW, scaleH);
 
-    const type = deviceType();
-
-    if (type === "phone") scale *= cfg.phoneBoost;
-    if (type === "tablet") scale *= cfg.tabletBoost;
-    if (type === "desktop") scale *= cfg.desktopBoost;
-
-    // محدودیت نهایی
+    // محدودیت‌ها
     scale = Math.max(cfg.minScale, Math.min(cfg.maxScale, scale));
 
     return scale;
@@ -465,6 +449,7 @@ document.addEventListener('touchmove', e => { if (e.scale && e.scale !== 1) e.pr
   };
 })();
 </script>
+
 
 
 
