@@ -383,6 +383,196 @@ document.addEventListener('touchmove', e => { if (e.scale && e.scale !== 1) e.pr
 </script>
 
 
+
+
+
+
+
+
+
+<script>
+/*
+  اسکریپت قوی و قدرتمند برای تنظیم خودکار اندازهٔ "صفحهٔ اصلی" و "کادر" اپلیکیشن
+  - فقط کافیه این <script> رو در صفحه بذاری (بعد از DOM یا داخل footer)
+  - بدون نیاز به تغییر قالب؛ دنبال اولین المان با کلاس .container یا id #container یا id #app می‌گردد
+  - واکنش به resize، orientationchange و visibilitychange
+  - دیباونس، انیمیشن نرم، محدودیت حداقل/حداکثر مقیاس
+  - کامنت‌ها به زبان فارسی برای فهم سریع
+*/
+
+(function(){
+  // تنظیمات قابل تغییر
+  const cfg = {
+    baseWidth: 480,          // عرض طراحی پایه (px)
+    baseHeight: 650,         // ارتفاع طراحی پایه (px)
+    minScale: 0.75,          // کمترین مقیاس مجاز
+    maxScale: 1.30,          // بیشترین مقیاس مجاز
+    phoneBreakpoint: 480,    // زیر این عرض => موبایل کوچک
+    tabletBreakpoint: 900,   // زیر این عرض => تبلت
+    animMs: 220,             // مدت انیمیشن تغییر مقیاس (ms)
+    useTransform: true,      // آیا از transform:scale استفاده شود (true) یا تغییر width/height مستقیم (false)
+    preserveAspect: true,    // حفظ نسبت ابعاد پایه هنگام تغییر اندازه
+    querySelectors: ['.container','#container','#app','main'] // المنت‌های هدف به ترتیب اولویت
+  };
+
+  // کمک: پیدا کردن المنت هدف
+  function findContainer() {
+    for (const sel of cfg.querySelectors) {
+      const el = document.querySelector(sel);
+      if (el) return el;
+    }
+    // fallback: اولین المنتی که کلاس container داره یا body
+    return document.querySelector('.container') || document.getElementById('app') || document.body;
+  }
+
+  const container = findContainer();
+  if (!container) return;
+
+  // آماده‌سازی استایل اولیه (اگر هنوز تعریف نشده)
+  container.style.willChange = 'transform';
+  container.style.transition = `transform ${cfg.animMs}ms cubic-bezier(.2,.9,.3,1)`;
+  container.style.transformOrigin = 'top center';
+
+  // تابع محاسبه نوع دستگاه (موبایل/تبلت/دسکتاپ) — قوی‌تر: از عرض و DPR و userAgent استفاده می‌کند
+  function detectDeviceCategory() {
+    const w = Math.max(window.innerWidth || 0, document.documentElement.clientWidth || 0);
+    const DPR = window.devicePixelRatio || 1;
+    const ua = (navigator.userAgent || '').toLowerCase();
+
+    // تشخیص موبایل براساس UA (کمک‌کننده)
+    const isMobileUA = /mobi|iphone|android.+mobile|windows phone/.test(ua);
+    const isTabletUA = /tablet|ipad|playbook|android(?!.*mobile)/.test(ua);
+
+    // تصمیم‌گیری با اولویت‌ها
+    if (w <= cfg.phoneBreakpoint || (isMobileUA && w < cfg.tabletBreakpoint && DPR > 1.0)) return 'phone';
+    if (isTabletUA || (w >= cfg.phoneBreakpoint && w < cfg.tabletBreakpoint)) return 'tablet';
+    return 'desktop';
+  }
+
+  // تابع محاسبه مقیاس نهایی بر اساس صفحه و مشخصات
+  function computeScale() {
+    const screenW = window.innerWidth;
+    const screenH = window.innerHeight;
+    const device = detectDeviceCategory();
+
+    // مقیاس پیش‌فرض بر اساس نسبت عرض
+    let scaleW = screenW / cfg.baseWidth;
+    let scaleH = screenH / cfg.baseHeight;
+    let baseScale = cfg.preserveAspect ? Math.min(scaleW, scaleH) : scaleW;
+
+    // اصلاح بر اساس دسته دستگاه برای رفتار قوی‌تر
+    if (device === 'phone') {
+      // موبایل‌ها کمی کوچکتر، ولی اگر صفحه کشیده باشه، تا حدی افزایش می‌دهیم
+      baseScale *= 0.98;
+    } else if (device === 'tablet') {
+      baseScale *= 1.06; // تبلت دوست داریم کمی بزرگ‌تر نمایش دهد
+    } else { // desktop
+      baseScale *= 1.12; // دسکتاپ: بزرگتر تا پرکنندهٔ فضا باشد
+    }
+
+    // اگر صفحه خیلی کوچک است (very narrow) => محدودیت سخت
+    if (screenW < 320) baseScale = Math.min(baseScale, 0.88);
+    if (screenH < 400) baseScale = Math.min(baseScale, 0.9);
+
+    // اعمال DPI-aware clamping
+    const DPR = window.devicePixelRatio || 1;
+    // روی دستگاه‌های با DPR بالا، اجازه افزایش بیشتر بده (تا تصویر شارپ بماند)
+    if (DPR >= 2 && device !== 'phone') {
+      baseScale *= 1 + Math.min(0.12, (DPR - 1) * 0.08);
+    }
+
+    // نهایی: محدود کن به min/max
+    baseScale = Math.max(cfg.minScale, Math.min(cfg.maxScale, baseScale));
+
+    // round to 3 decimals for stable transforms
+    return Math.round(baseScale * 1000) / 1000;
+  }
+
+  // تابع اعمال مقیاس همراه با fallback برای مرورگرهایی که transform ندارند
+  function applyScale(scale) {
+    if (cfg.useTransform) {
+      container.style.transform = `scale(${scale})`;
+      // وقتی scale کمتر از 1 باشد، ممکن است container کوچک شود و فضای پایین خالی بماند.
+      // برای وسط‌چین بهتر در موبایل، می‌توان margin-top تنظیم کرد:
+      const topOffset = Math.max(6, Math.round((1 - scale) * 30));
+      container.style.marginTop = topOffset + 'px';
+    } else {
+      // تغییر مستقیم عرض/ارتفاع بر اساس base
+      container.style.width = Math.round(cfg.baseWidth * scale) + 'px';
+      container.style.height = Math.round(cfg.baseHeight * scale) + 'px';
+    }
+  }
+
+  // debounce utility
+  function debounce(fn, wait=120) {
+    let t = null;
+    return function(...args) {
+      clearTimeout(t);
+      t = setTimeout(() => fn.apply(this, args), wait);
+    };
+  }
+
+  // تابع اصلی که همه‌چیز را هماهنگ می‌کند
+  let currentScale = null;
+  function recalcAndApply() {
+    const s = computeScale();
+    if (s === currentScale) return;
+    currentScale = s;
+    applyScale(s);
+    // در صورت نیاز می‌توانیم یک کلاس یا متغیر CSS ست کنیم
+    container.style.setProperty('--app-scale', s);
+  }
+
+  const debouncedRecalc = debounce(recalcAndApply, 80);
+
+  // واکنش به تغییر اندازه/چرخش/فعالیت کاربر
+  window.addEventListener('resize', debouncedRecalc, { passive: true });
+  window.addEventListener('orientationchange', debouncedRecalc, { passive: true });
+  window.addEventListener('load', recalcAndApply);
+  // وقتی تب فعال/غیرفعال می‌شود (نسبت صفحه ممکن است تغییر کند)
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) recalcAndApply();
+  });
+
+  // تابع عمومی برای بازنشانی به حالت پیش‌فرض (scale=1)
+  window.resetAppScale = function(options = { animated: true }) {
+    if (options.animated) {
+      container.style.transition = `transform ${cfg.animMs}ms cubic-bezier(.2,.9,.3,1)`;
+    } else {
+      container.style.transition = 'none';
+    }
+    currentScale = 1;
+    applyScale(1);
+    // بازگرداندن transition به حالت اولیه پس از مدت انیمیشن
+    if (options.animated) {
+      setTimeout(() => {
+        container.style.transition = `transform ${cfg.animMs}ms cubic-bezier(.2,.9,.3,1)`;
+      }, cfg.animMs + 20);
+    }
+  };
+
+  // اجرای اولیه
+  recalcAndApply();
+
+  // ارائه API کوچک برای دسترسی از بیرون
+  window.AppAutoScaler = {
+    recalc: recalcAndApply,
+    reset: window.resetAppScale,
+    config: cfg,
+    getCurrentScale: () => currentScale,
+    container: container
+  };
+
+})();
+</script>
+
+
+
+
+
+
+  
+
 <script>
 function autoResizeContainer() {
     const container = document.querySelector(".container");
