@@ -392,13 +392,13 @@ document.addEventListener('touchmove', e => { if (e.scale && e.scale !== 1) e.pr
       let scale = 1;
 
       // ---- گوشی‌های کوچک ----
-      if (inch <= 4.0) scale = 0.82;     // 4.0"
-      else if (inch <= 4.5) scale = 0.88; // 4.5"
-      else if (inch <= 5.0) scale = 0.92; // 5.0"
-      else if (inch <= 5.5) scale = 0.98; // 5.5"
-      else if (inch <= 6.0) scale = 1.00; // 6.0"
-      else if (inch <= 6.5) scale = 1.05; // 6.5"
-      else if (inch <= 7.0) scale = 1.10; // 7.0"
+      if (inch <= 4.0) scale = 0.90;     // 4.0"
+      else if (inch <= 4.5) scale = 1.00; // 4.5"
+      else if (inch <= 5.0) scale = 1.50; // 5.0"
+      else if (inch <= 5.5) scale = 2.00; // 5.5"
+      else if (inch <= 6.0) scale = 2.50; // 6.0"
+      else if (inch <= 6.5) scale = 3.00; // 6.5"
+      else if (inch <= 7.0) scale = 3.50; // 7.0"
 
       // ---- تبلت‌ها ----
       else if (inch <= 8.0) scale = 1.15;  // 8"
