@@ -391,29 +391,29 @@ document.addEventListener('touchmove', e => { if (e.scale && e.scale !== 1) e.pr
       const inch = detectInch();
       let scale = 1;
 
-      // ---- گوشی‌های کوچک ----
-if (inch <= 4.0) scale = 0.95;      // 4.0"
-else if (inch <= 4.5) scale = 1.02; // 4.5"
-else if (inch <= 5.0) scale = 1.08; // 5.0"
-else if (inch <= 5.5) scale = 1.15; // 5.5"
-else if (inch <= 6.0) scale = 1.22; // 6.0"
-else if (inch <= 6.5) scale = 1.28; // 6.5"
-else if (inch <= 7.0) scale = 1.35; // 7.0"
+ // ---- گوشی‌های کوچک ----
+if (inch <= 4.0) scale = 0.90;      // 4.0"
+else if (inch <= 4.5) scale = 0.97; // 4.5"
+else if (inch <= 5.0) scale = 1.03; // 5.0"
+else if (inch <= 5.5) scale = 1.10; // 5.5"
+else if (inch <= 6.0) scale = 1.17; // 6.0"
+else if (inch <= 6.5) scale = 1.23; // 6.5"
+else if (inch <= 7.0) scale = 1.30; // 7.0"
 
 // ---- تبلت‌ها ----
-else if (inch <= 8.0) scale = 1.42;  // 8"
-else if (inch <= 9.0) scale = 1.48;  // 9"
-else if (inch <= 10.0) scale = 1.55; // 10"
-else if (inch <= 11.0) scale = 1.62; // 11"
-else if (inch <= 12.0) scale = 1.70; // 12"
+else if (inch <= 8.0) scale = 1.37;  // 8"
+else if (inch <= 9.0) scale = 1.42;  // 9"
+else if (inch <= 10.0) scale = 1.48; // 10"
+else if (inch <= 11.0) scale = 1.55; // 11"
+else if (inch <= 12.0) scale = 1.62; // 12"
 
 // ---- لپتاپ/مانیتور ----
-else if (inch <= 13.0) scale = 1.78; // 13"
-else if (inch <= 14.0) scale = 1.85; // 14"
-else if (inch <= 15.0) scale = 1.95; // 15"
+else if (inch <= 13.0) scale = 1.68; // 13"
+else if (inch <= 14.0) scale = 1.75; // 14"
+else if (inch <= 15.0) scale = 1.82; // 15"
 
 // ---- خیلی بزرگ‌تر از 15 اینچ ----
-else scale = 2.10;
+else scale = 1.90;
 
 
       container.style.transform = `scale(${scale})`;
