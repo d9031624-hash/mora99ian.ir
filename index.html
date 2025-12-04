@@ -390,26 +390,24 @@ document.addEventListener('touchmove', e => { if (e.scale && e.scale !== 1) e.pr
 
 <script>
 /*
-  نسخه ارتقایافته برای پرکردن کامل صفحهٔ گوشی + بزرگ‌تر شدن
-  فقط اسکریپت — بدون قالب
+  نسخه ULTRA FULLSCREEN
+  بسیار بزرگ – تا 2.5 برابر – مخصوص پوشش کامل صفحه موبایل و تبلت
 */
 
 (function(){
   const cfg = {
-    baseWidth: 480,
-    baseHeight: 650,
-    minScale: 0.90,
-    maxScale: 1.60,          // اجازه بزرگ‌تر شدن بیشتر
-    phoneBoost: 1.18,        // گوشی‌ها را ~18% بزرگ‌تر کن
-    tabletBoost: 1.08,
-    desktopBoost: 1.12,
+    baseWidth: 380,
+    baseHeight: 640,
+    minScale: 1.10,       // حداقل بزرگ‌تر از حالت عادی
+    maxScale: 2.50,       // اجازه رشد تا ۲.۵ برابر
+    phoneBoost: 1.40,     // گوشی‌ها ۴۰٪ بزرگ‌تر
+    tabletBoost: 1.30,    // تبلت‌ها ۳۰٪ بزرگ‌تر
+    desktopBoost: 1.10,
     animMs: 200,
-    useTransform: true,
-    preserveAspect: true,
     selectors: ['#app','.container','#container','main','body']
   };
 
-  function findContainer(){
+  function findRoot(){
     for (const s of cfg.selectors){
       const el = document.querySelector(s);
       if (el) return el;
@@ -417,17 +415,16 @@ document.addEventListener('touchmove', e => { if (e.scale && e.scale !== 1) e.pr
     return document.body;
   }
 
-  const box = findContainer();
+  const box = findRoot();
   box.style.transformOrigin = "top center";
   box.style.transition = `transform ${cfg.animMs}ms ease`;
 
-  function detectDevice(){
-    const w = window.innerWidth;
+  function deviceType(){
     const ua = navigator.userAgent.toLowerCase();
-    const isPhoneUA = /mobi|android.+mobile|iphone|windows phone/.test(ua);
+    const w = window.innerWidth;
 
-    if (w < 600 || isPhoneUA) return "phone";
-    if (w < 1000) return "tablet";
+    if (w < 620 || /mobi|android|iphone/.test(ua)) return "phone";
+    if (w < 1200) return "tablet";
     return "desktop";
   }
 
@@ -435,11 +432,13 @@ document.addEventListener('touchmove', e => { if (e.scale && e.scale !== 1) e.pr
     const W = window.innerWidth;
     const H = window.innerHeight;
 
-    const scaleW = W / cfg.baseWidth;
-    const scaleH = H / cfg.baseHeight;
-    let scale = Math.min(scaleW, scaleH);
+    let scaleW = W / cfg.baseWidth;
+    let scaleH = H / cfg.baseHeight;
 
-    const type = detectDevice();
+    // همیشه بزرگ‌ترین مقیاس را انتخاب می‌کنیم (برای FULL COVER)
+    let scale = Math.max(scaleW, scaleH);
+
+    const type = deviceType();
 
     if (type === "phone") scale *= cfg.phoneBoost;
     if (type === "tablet") scale *= cfg.tabletBoost;
@@ -451,22 +450,22 @@ document.addEventListener('touchmove', e => { if (e.scale && e.scale !== 1) e.pr
     return scale;
   }
 
-  function applyScale(){
+  function apply(){
     const sc = calcScale();
     box.style.transform = `scale(${sc})`;
   }
 
-  window.addEventListener("resize", ()=>applyScale());
-  window.addEventListener("orientationchange", ()=>applyScale());
-  window.addEventListener("load", applyScale);
+  window.addEventListener("resize", apply);
+  window.addEventListener("orientationchange", apply);
+  window.addEventListener("load", apply);
 
   // دکمه بازگشت به حالت اولیه
   window.resetAppScale = function(){
     box.style.transform = "scale(1)";
   };
-
 })();
 </script>
+
 
 
 
