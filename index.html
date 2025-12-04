@@ -123,7 +123,6 @@ input::selection { background: transparent; }
 
   <div class="section">
     <div class="box suggestions" id="suggestions" aria-live="polite"></div>
-    <div class="box history" id="history"></div>
     <div class="box result" id="result" aria-live="polite"></div>
   </div>
 </div>
@@ -357,53 +356,6 @@ const historyEl = document.getElementById('history');
 const resultEl = document.getElementById('result');
 const modal = document.getElementById('modal');
 const modalContent = document.getElementById('modalContent');
-
-/* تاریخچه از localStorage */
-let historyList = JSON.parse(localStorage.getItem('searchHistory') || '[]');
-/* ====== کمک‌کننده‌ها ====== */
-function renderHistory() {
-  historyEl.innerHTML = '';
-  if (!historyList.length) {
-    historyEl.innerHTML = '<div class="small">تاریخچه خالی است</div>';
-    return;
-  }
-  // دکمه پاک کردن
-  const clearBtn = document.createElement('div');
-  clearBtn.innerHTML = '<strong class="small">پاک کردن تاریخچه</strong>';
-  clearBtn.style.textAlign = 'center';
-  clearBtn.style.cursor = 'pointer';
-  clearBtn.onclick = () => { historyList = []; localStorage.removeItem('searchHistory'); renderHistory(); };
-  historyEl.appendChild(clearBtn);
-
-  historyList.forEach(item => {
-    const d = document.createElement('div');
-    d.textContent = item;
-    d.onclick = () => { qInput.value = item; searchAndShow(item); };
-    historyEl.appendChild(d);
-  });
-}
-
-function saveHistory(term) {
-  if (!term) return;
-  // حذف موارد تکراری و اضافه به اول
-  historyList = historyList.filter(x => x !== term);
-  historyList.unshift(term);
-  if (historyList.length > 20) historyList = historyList.slice(0,20);
-  localStorage.setItem('searchHistory', JSON.stringify(historyList));
-  renderHistory();
-}
-
-function showModal(html) {
-  modalContent.innerHTML = html;
-  modal.style.display = 'flex';
-  document.body.style.overflow = 'hidden';
-}
-function closeModal(e) {
-  if (e && e.target !== modal) return;
-  modal.style.display = 'none';
-  modalContent.innerHTML = '';
-  document.body.style.overflow = '';
-}
 
 
 
