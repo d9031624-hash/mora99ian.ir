@@ -123,6 +123,7 @@ input::selection { background: transparent; }
 
   <div class="section">
     <div class="box suggestions" id="suggestions" aria-live="polite"></div>
+    <div class="box history" id="history"></div>
     <div class="box result" id="result" aria-live="polite"></div>
   </div>
 </div>
@@ -206,45 +207,6 @@ body, .container {
 
 
 
-<script>
-(function(){
-    const container = document.querySelector('.container');
-    if (!container) return;
-
-    const shakeDistance = 10; // حداکثر تکان به px
-    const shakeDuration = 300; // مدت زمان کل تکان به میلی‌ثانیه
-    const shakeFPS = 60; // فریم در ثانیه
-
-    function shake() {
-        let start = null;
-        const originalTransform = container.style.transform || '';
-
-        function step(timestamp) {
-            if (!start) start = timestamp;
-            const elapsed = timestamp - start;
-            const progress = elapsed / shakeDuration;
-
-            // محاسبه حرکت خشک با تابع مثلثی (zig-zag)
-            const angle = progress * Math.PI * 6; // 3 دوره کامل
-            const offset = Math.sin(angle) * shakeDistance;
-
-            container.style.transform = `translateX(${offset}px)`;
-
-            if (progress < 1) requestAnimationFrame(step);
-            else container.style.transform = originalTransform; // بازگشت دقیق
-        }
-
-        requestAnimationFrame(step);
-    }
-
-    // اجرای تکان هر 5 ثانیه (می‌توان تغییر داد)
-    setInterval(shake, 5000);
-})();
-</script>
-
-
-
-
 
 <!-- نوار پایینی تبلیغاتی -->
 <div class="bottom-bar">
@@ -319,7 +281,6 @@ function addTickerMessage(msg){
 
 
 
-  
 
 
 
@@ -363,6 +324,27 @@ const historyEl = document.getElementById('history');
 const resultEl = document.getElementById('result');
 const modal = document.getElementById('modal');
 const modalContent = document.getElementById('modalContent');
+
+
+  // حذف موارد تکراری و اضافه به اول
+  historyList = historyList.filter(x => x !== term);
+  historyList.unshift(term);
+  if (historyList.length > 20) historyList = historyList.slice(0,20);
+  localStorage.setItem('searchHistory', JSON.stringify(historyList));
+  renderHistory();
+}
+
+function showModal(html) {
+  modalContent.innerHTML = html;
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(e) {
+  if (e && e.target !== modal) return;
+  modal.style.display = 'none';
+  modalContent.innerHTML = '';
+  document.body.style.overflow = '';
+}
 
 
 
@@ -599,6 +581,41 @@ else scale = 1.90;
 
 
 
+<script>
+(function(){
+    const container = document.querySelector('.container');
+    if (!container) return;
+
+    const shakeDistance = 10; // حداکثر تکان به px
+    const shakeDuration = 300; // مدت زمان کل تکان به میلی‌ثانیه
+    const shakeFPS = 60; // فریم در ثانیه
+
+    function shake() {
+        let start = null;
+        const originalTransform = container.style.transform || '';
+
+        function step(timestamp) {
+            if (!start) start = timestamp;
+            const elapsed = timestamp - start;
+            const progress = elapsed / shakeDuration;
+
+            // محاسبه حرکت خشک با تابع مثلثی (zig-zag)
+            const angle = progress * Math.PI * 6; // 3 دوره کامل
+            const offset = Math.sin(angle) * shakeDistance;
+
+            container.style.transform = `translateX(${offset}px)`;
+
+            if (progress < 1) requestAnimationFrame(step);
+            else container.style.transform = originalTransform; // بازگشت دقیق
+        }
+
+        requestAnimationFrame(step);
+    }
+
+    // اجرای تکان هر 5 ثانیه (می‌توان تغییر داد)
+    setInterval(shake, 5000);
+})();
+</script>
 
 
 
