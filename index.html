@@ -290,15 +290,17 @@ function addTickerMessage(msg){
     const container = document.querySelector(".container");
     if(!container) return;
 
-    // ابعاد اصلی برنامه
-    const BASE_WIDTH = 480;
-    const BASE_HEIGHT = 650;
+    // ------ تنظیمات قابل تغییر ------
+    const BASE_WIDTH  = 480;   // عرض دلخواه
+    const BASE_HEIGHT = 700;   // ارتفاع دلخواه
+    const POSITION = { top: 50, left: 30 }; // جای container در صفحه
+    //----------------------------------
 
     function getScreenInches(){
         const w = window.screen.width;
         const h = window.screen.height;
         const diagonalPx = Math.sqrt(w*w + h*h);
-        const dpi = 160; // فرض dpi متوسط
+        const dpi = 160; 
         return diagonalPx / dpi;
     }
 
@@ -306,51 +308,42 @@ function addTickerMessage(msg){
         const inch = getScreenInches();
         let scale = 1;
 
-        // ---- گوشی‌های کوچک ----
-        if(inch <= 4.0) scale = 0.88;       // 4.0"
-        else if(inch <= 4.3) scale = 0.92;  // 4.3"
-        else if(inch <= 4.5) scale = 0.95;  // 4.5"
-        else if(inch <= 4.7) scale = 0.98;  // 4.7"
-        else if(inch <= 5.0) scale = 1.02;  // 5.0"
-        else if(inch <= 5.3) scale = 1.06;  // 5.3"
-        else if(inch <= 5.5) scale = 1.09;  // 5.5"
-        else if(inch <= 6.0) scale = 1.14;  // 6.0"
-        else if(inch <= 6.3) scale = 1.18;  // 6.3"
-        else if(inch <= 6.5) scale = 1.22;  // 6.5"
-        else if(inch <= 7.0) scale = 1.27;  // 7.0"
-
-        // ---- تبلت‌ها ----
-        else if(inch <= 8.0) scale = 1.33;  // 8"
-        else if(inch <= 8.5) scale = 1.36;  // 8.5"
-        else if(inch <= 9.0) scale = 1.39;  // 9"
-        else if(inch <= 9.5) scale = 1.42;  // 9.5"
-        else if(inch <= 10.0) scale = 1.46; // 10"
-        else if(inch <= 10.5) scale = 1.49; // 10.5"
-        else if(inch <= 11.0) scale = 1.70; // 11"
-        else if(inch <= 11.5) scale = 1.80; // 11.5"
-        else if(inch <= 12.0) scale = 1.90; // 12"
-
-        // ---- لپتاپ/مانیتور ----
-        else if(inch <= 13.0) scale = 2.0; // 13"
-        else if(inch <= 14.0) scale = 2.10; // 14"
-        else if(inch <= 15.0) scale = 1.81; // 15"
-        else if(inch <= 15.6) scale = 1.85; // 15.6"
-
-        // خیلی بزرگ‌تر از 15.6 اینچ
+        // ---- بازه‌های دقیق از 4 تا 15.6 اینچ ----
+        if(inch <= 4.0) scale = 0.88;
+        else if(inch <= 4.5) scale = 0.95;
+        else if(inch <= 5.0) scale = 1.02;
+        else if(inch <= 5.5) scale = 1.09;
+        else if(inch <= 6.0) scale = 1.14;
+        else if(inch <= 6.5) scale = 1.22;
+        else if(inch <= 7.0) scale = 1.27;
+        else if(inch <= 8.0) scale = 1.33;
+        else if(inch <= 9.0) scale = 1.39;
+        else if(inch <= 10.0) scale = 1.46;
+        else if(inch <= 11.0) scale = 1.53;
+        else if(inch <= 12.0) scale = 1.60;
+        else if(inch <= 13.0) scale = 1.67;
+        else if(inch <= 14.0) scale = 1.74;
+        else if(inch <= 15.0) scale = 1.81;
+        else if(inch <= 15.6) scale = 1.85;
         else scale = 1.90;
 
-        // اعمال به container
+        // اعمال تنظیمات
+        container.style.width  = BASE_WIDTH + "px";
+        container.style.height = BASE_HEIGHT + "px";
+
+        // جای container
+        container.style.position = "absolute";
+        container.style.top  = POSITION.top + "px";
+        container.style.left = POSITION.left + "px";
+
+        // مقیاس
         container.style.transform = `scale(${scale})`;
-        container.style.transformOrigin = "top center";
-        container.style.width = `${BASE_WIDTH}px`;
-        container.style.height = `${BASE_HEIGHT}px`;
+        container.style.transformOrigin = "top left";
     }
 
-    // اجرا هنگام لود و تغییر اندازه
     window.addEventListener("load", applyScale);
     window.addEventListener("resize", applyScale);
     window.addEventListener("orientationchange", applyScale);
-
 })();
 </script>
 
