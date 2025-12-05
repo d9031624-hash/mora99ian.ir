@@ -286,48 +286,59 @@ function addTickerMessage(msg){
 
 
 <script>
-(function () {
+(function(){
+    const container = document.querySelector(".container");
+    if(!container) return;
 
-    function applyAutoFit() {
+    // نسبت ثابت (عرض:ارتفاع)
+    const RATIO = 9/16; // می‌تواند 3/4 یا 9/16 باشد
 
-        const box = document.querySelector(".container");
-        if (!box) return;
+    // انیمیشن نرم
+    container.style.transition = "transform 0.3s ease, width 0.3s ease, height 0.3s ease";
 
-        // ابعاد واقعی صفحه
+    function deviceType(){
+        const ua = navigator.userAgent.toLowerCase();
+        const w = window.innerWidth;
+        if(w < 620 || /mobi|android|iphone/.test(ua)) return "phone";
+        if(w < 1200) return "tablet";
+        return "desktop";
+    }
+
+    function applyUltraFit(){
         const W = window.innerWidth;
         const H = window.innerHeight;
 
-        // درصدهای امن (Safe Zone)
-        const safeW = W * 0.93;  // 90% عرض صفحه
-        const safeH = H * 0.85;  // 85% ارتفاع صفحه
+        let safeW = W * 0.95; // همیشه داخل صفحه
+        let safeH = H * 0.95;
 
-        // اعمال سایز ایمن
-        box.style.width  = safeW + "px";
-        box.style.height = safeH + "px";
+        // حفظ نسبت
+        if(safeW / safeH > RATIO) safeW = safeH * RATIO;
+        else safeH = safeW / RATIO;
 
-        // وسط‌چین کردن کاملاً استاندارد
-        box.style.position = "absolute";
-        box.style.left = "50%";
-        box.style.top  = "50%";
-        box.style.transform = "translate(-50%, -50%)";
+        // محاسبه scale هوشمند نسبت به ابعاد پایه
+        const BASE_WIDTH = 480;
+        const BASE_HEIGHT = 850; 
+        const scale = Math.min(safeW / BASE_WIDTH, safeH / BASE_HEIGHT);
 
-        // گوشه‌ها گرد – بهتر دیده شود
-        box.style.borderRadius = "12px";
+        // اعمال ابعاد و موقعیت
+        container.style.width = BASE_WIDTH + "px";
+        container.style.height = BASE_HEIGHT + "px";
+        container.style.transformOrigin = "top left";
+        container.style.transform = `scale(${scale})`;
 
-        // جلوگیری از بیرون زدن محتوا
-        box.style.overflow = "auto";
-
-        // ضد لگ
-        box.style.transform += " translateZ(0)";
+        // مقیاس محتوای داخلی
+        Array.from(container.children).forEach(el=>{
+            el.style.transformOrigin = "top left";
+            el.style.transform = `scale(${scale})`;
+        });
     }
 
-    // اجرا در زمان مناسب
-    window.addEventListener("load", applyAutoFit);
-    window.addEventListener("resize", applyAutoFit);
-    window.addEventListener("orientationchange", applyAutoFit);
-
+    window.addEventListener("load", applyUltraFit);
+    window.addEventListener("resize", applyUltraFit);
+    window.addEventListener("orientationchange", applyUltraFit);
 })();
 </script>
+
 
 
 
