@@ -439,52 +439,112 @@ function closeModal(e) {
 
 
 
-/* ====== نمایش آیتم نتیحه با عکس کوچک ====== */
+/* ====== نمایش آیتم نتیحه با عکس کوچک و مودال تمام صفحه ====== */
+
 function makeResultItem(title, extract, thumbUrl, pageid) {
-  const wrapper = document.createElement('div');
-  wrapper.style.alignItems = 'flex-start';
-  // thumbnail
-  if (thumbUrl) {
-    const img = document.createElement('img');
-    img.src = thumbUrl;
-    img.className = 'item-thumb';
-    wrapper.appendChild(img);
-  }
-  const body = document.createElement('div');
-  body.className = 'item-body';
-  const t = document.createElement('strong'); t.textContent = title;
-  const p = document.createElement('div'); p.textContent = extract || '';
-  const link = document.createElement('a'); link.href = 'https://fa.wikipedia.org/?curid=' + pageid; link.target = '_blank';
-  link.textContent = 'نمایش در ویکی‌پدیا ›';
-  link.className = 'small';
-  body.appendChild(t); body.appendChild(p); body.appendChild(link);
-  wrapper.appendChild(body);
+const wrapper = document.createElement('div');
+wrapper.style.display = 'flex';
+wrapper.style.alignItems = 'flex-start';
+wrapper.style.cursor = 'pointer';
+wrapper.style.marginBottom = '12px';
 
-  // کلیک برای مودال (نمایش بزرگتر و متن کامل)
-  wrapper.onclick = async (e) => {
-    e.preventDefault();
-    // show modal with fuller content (try rest summary)
-    try {
-      const resp = await fetch('https://fa.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(title));
-      if (resp.ok) {
-        const data = await resp.json();
-        let html = '';
-        if (data.thumbnail && data.thumbnail.source) html += '<img src="'+data.thumbnail.source+'" alt="">';
-        html += '<h3>' + (data.title || title) + '</h3>';
-        html += '<p>' + (data.extract || '') + '</p>';
-        if (data.content_urls && data.content_urls.desktop) html += '<p style="margin-top:8px;"><a href="'+data.content_urls.desktop.page+'" target="_blank">مشاهده کامل در ویکی‌پدیا</a></p>';
-        showModal(html);
-      } else {
-        showModal('<p>خطا در دریافت اطلاعات کامل.</p>');
-      }
-    } catch(err) {
-      console.error(err);
-      showModal('<p>خطا در دریافت اطلاعات.</p>');
-    }
-  };
-
-  return wrapper;
+// thumbnail
+if (thumbUrl) {
+const img = document.createElement('img');
+img.src = thumbUrl;
+img.className = 'item-thumb';
+img.style.width = '80px';
+img.style.height = '80px';
+img.style.objectFit = 'cover';
+img.style.marginRight = '10px';
+wrapper.appendChild(img);
 }
+
+const body = document.createElement('div');
+body.className = 'item-body';
+const t = document.createElement('strong'); t.textContent = title;
+const p = document.createElement('div'); p.textContent = extract || '';
+const link = document.createElement('a');
+link.href = '[https://fa.wikipedia.org/?curid=](https://fa.wikipedia.org/?curid=)' + pageid;
+link.target = '_blank';
+link.textContent = 'نمایش در ویکی‌پدیا ›';
+link.className = 'small';
+body.appendChild(t);
+body.appendChild(p);
+body.appendChild(link);
+wrapper.appendChild(body);
+
+// کلیک برای مودال تمام صفحه
+wrapper.onclick = async (e) => {
+e.preventDefault();
+
+```
+try {
+  const resp = await fetch('https://fa.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(title));
+  let html = '';
+  if (resp.ok) {
+    const data = await resp.json();
+    if (data.thumbnail && data.thumbnail.source) html += '<img src="'+data.thumbnail.source+'" alt="" style="max-width:100%; margin-bottom:12px;">';
+    html += '<h2 style="margin:12px 0;">' + (data.title || title) + '</h2>';
+    html += '<p style="line-height:1.5; font-size:16px;">' + (data.extract || '') + '</p>';
+    if (data.content_urls && data.content_urls.desktop) html += '<p style="margin-top:12px;"><a href="'+data.content_urls.desktop.page+'" target="_blank">مشاهده کامل در ویکی‌پدیا</a></p>';
+  } else {
+    html = '<p>خطا در دریافت اطلاعات کامل.</p>';
+  }
+  showFullscreenModal(html);
+} catch(err) {
+  console.error(err);
+  showFullscreenModal('<p>خطا در دریافت اطلاعات.</p>');
+}
+```
+
+};
+
+return wrapper;
+}
+
+// ======= مودال تمام صفحه =======
+function showFullscreenModal(contentHtml) {
+let modal = document.getElementById('fullscreen-modal');
+if(!modal) {
+modal = document.createElement('div');
+modal.id = 'fullscreen-modal';
+modal.style.position = 'fixed';
+modal.style.top = 0;
+modal.style.left = 0;
+modal.style.width = '100vw';
+modal.style.height = '100vh';
+modal.style.backgroundColor = 'rgba(0,0,0,0.9)';
+modal.style.color = '#fff';
+modal.style.zIndex = 9999;
+modal.style.padding = '20px';
+modal.style.overflowY = 'auto';
+modal.style.display = 'flex';
+modal.style.flexDirection = 'column';
+modal.style.alignItems = 'center';
+modal.style.justifyContent = 'center';
+modal.style.transition = 'opacity 0.3s ease';
+modal.style.opacity = 0;
+
+```
+modal.onclick = (e) => {
+  if(e.target === modal) closeFullscreenModal();
+};
+document.body.appendChild(modal);
+```
+
+}
+
+modal.innerHTML = contentHtml;
+modal.style.opacity = 1;
+modal.style.display = 'flex';
+}
+
+function closeFullscreenModal() {
+const modal = document.getElementById('fullscreen-modal');
+if(modal) modal.style.display = 'none';
+}
+
 
 /* ====== جستجو و دریافت نتایج ====== */
 let debounceTimer = null;
