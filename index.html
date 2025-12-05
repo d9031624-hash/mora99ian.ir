@@ -287,65 +287,220 @@ function addTickerMessage(msg){
 
 <script>
 (function(){
-    const container = document.querySelector(".container");
-    if(!container) return;
 
-    // ------ تنظیمات قابل تغییر ------
-    const BASE_WIDTH  = 480;   // عرض دلخواه
-    const BASE_HEIGHT = 700;   // ارتفاع دلخواه
-    const POSITION = { top: 50, left: 30 }; // جای container در صفحه
-    //----------------------------------
+    let BASE_WIDTH;
+    let BASE_HEIGHT;
+    let POSITION = { top: 0, left: 0 };
 
-    function getScreenInches(){
-        const w = window.screen.width;
-        const h = window.screen.height;
-        const diagonalPx = Math.sqrt(w*w + h*h);
-        const dpi = 160; 
-        return diagonalPx / dpi;
+    function applyScaleByInch(inch){
+
+if (inch === 4.0) {
+    BASE_WIDTH = 360; BASE_HEIGHT = 600;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 4.1) {
+    BASE_WIDTH = 360; BASE_HEIGHT = 610;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 4.2) {
+    BASE_WIDTH = 360; BASE_HEIGHT = 620;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 4.3) {
+    BASE_WIDTH = 370; BASE_HEIGHT = 630;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 4.4) {
+    BASE_WIDTH = 370; BASE_HEIGHT = 640;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 4.5) {
+    BASE_WIDTH = 380; BASE_HEIGHT = 650;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 4.6) {
+    BASE_WIDTH = 380; BASE_HEIGHT = 660;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 4.7) {
+    BASE_WIDTH = 390; BASE_HEIGHT = 670;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 4.8) {
+    BASE_WIDTH = 390; BASE_HEIGHT = 680;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 4.9) {
+    BASE_WIDTH = 395; BASE_HEIGHT = 690;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 5.0) {
+    BASE_WIDTH = 400; BASE_HEIGHT = 700;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 5.1) {
+    BASE_WIDTH = 400; BASE_HEIGHT = 710;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 5.2) {
+    BASE_WIDTH = 400; BASE_HEIGHT = 720;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 5.3) {
+    BASE_WIDTH = 410; BASE_HEIGHT = 730;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 5.4) {
+    BASE_WIDTH = 410; BASE_HEIGHT = 740;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 5.5) {
+    BASE_WIDTH = 420; BASE_HEIGHT = 750;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 5.6) {
+    BASE_WIDTH = 420; BASE_HEIGHT = 760;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 5.7) {
+    BASE_WIDTH = 430; BASE_HEIGHT = 770;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 5.8) {
+    BASE_WIDTH = 430; BASE_HEIGHT = 780;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 5.9) {
+    BASE_WIDTH = 435; BASE_HEIGHT = 790;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 6.0) {
+    BASE_WIDTH = 440; BASE_HEIGHT = 800;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 6.1) {
+    BASE_WIDTH = 440; BASE_HEIGHT = 820;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 6.2) {
+    BASE_WIDTH = 450; BASE_HEIGHT = 830;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 6.3) {
+    BASE_WIDTH = 450; BASE_HEIGHT = 840;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 6.4) {
+    BASE_WIDTH = 455; BASE_HEIGHT = 850;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 6.5) {
+    BASE_WIDTH = 460; BASE_HEIGHT = 860;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 6.6) {
+    BASE_WIDTH = 460; BASE_HEIGHT = 870;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 6.7) {
+    BASE_WIDTH = 470; BASE_HEIGHT = 880;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 6.8) {
+    BASE_WIDTH = 470; BASE_HEIGHT = 890;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 6.9) {
+    BASE_WIDTH = 475; BASE_HEIGHT = 900;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 7.0) {
+    BASE_WIDTH = 480; BASE_HEIGHT = 920;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 8.0) {
+    BASE_WIDTH = 520; BASE_HEIGHT = 950;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 9.0) {
+    BASE_WIDTH = 560; BASE_HEIGHT = 1000;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 10.0) {
+    BASE_WIDTH = 600; BASE_HEIGHT = 1050;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 11.0) {
+    BASE_WIDTH = 640; BASE_HEIGHT = 1100;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 12.0) {
+    BASE_WIDTH = 680; BASE_HEIGHT = 1150;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 13.0) {
+    BASE_WIDTH = 720; BASE_HEIGHT = 1200;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 14.0) {
+    BASE_WIDTH = 760; BASE_HEIGHT = 1250;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 15.0) {
+    BASE_WIDTH = 800; BASE_HEIGHT = 1300;
+    POSITION = {top: 20, left: 20};
+}
+
+else if (inch === 15.6) {
+    BASE_WIDTH = 820; BASE_HEIGHT = 1350;
+    POSITION = {top: 20, left: 20};
+}
+
+
+        return { BASE_WIDTH, BASE_HEIGHT, POSITION };
     }
 
-    function applyScale(){
-        const inch = getScreenInches();
-        let scale = 1;
-
-        // ---- بازه‌های دقیق از 4 تا 15.6 اینچ ----
-        if(inch <= 4.0) scale = 0.88;
-        else if(inch <= 4.5) scale = 0.95;
-        else if(inch <= 5.0) scale = 1.02;
-        else if(inch <= 5.5) scale = 1.09;
-        else if(inch <= 6.0) scale = 1.14;
-        else if(inch <= 6.5) scale = 1.22;
-        else if(inch <= 7.0) scale = 1.27;
-        else if(inch <= 8.0) scale = 1.33;
-        else if(inch <= 9.0) scale = 1.39;
-        else if(inch <= 10.0) scale = 1.46;
-        else if(inch <= 11.0) scale = 1.53;
-        else if(inch <= 12.0) scale = 1.60;
-        else if(inch <= 13.0) scale = 1.67;
-        else if(inch <= 14.0) scale = 1.74;
-        else if(inch <= 15.0) scale = 1.81;
-        else if(inch <= 15.6) scale = 1.85;
-        else scale = 1.90;
-
-        // اعمال تنظیمات
-        container.style.width  = BASE_WIDTH + "px";
-        container.style.height = BASE_HEIGHT + "px";
-
-        // جای container
-        container.style.position = "absolute";
-        container.style.top  = POSITION.top + "px";
-        container.style.left = POSITION.left + "px";
-
-        // مقیاس
-        container.style.transform = `scale(${scale})`;
-        container.style.transformOrigin = "top left";
-    }
-
-    window.addEventListener("load", applyScale);
-    window.addEventListener("resize", applyScale);
-    window.addEventListener("orientationchange", applyScale);
 })();
 </script>
+
 
 
 
