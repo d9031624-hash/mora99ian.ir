@@ -291,53 +291,47 @@ function addTickerMessage(msg){
     if(!container) return;
 
     // نسبت ثابت (عرض:ارتفاع)
-    const RATIO = 9/16; // می‌تواند 3/4 یا 9/16 باشد
+    const RATIO = 9/16; // 9:16 یا 3:4
 
-    // انیمیشن نرم
-    container.style.transition = "transform 0.3s ease, width 0.3s ease, height 0.3s ease";
+    // انیمیشن نرم فقط برای container
+    container.style.transition = "transform 0.3s ease, width 0.3s ease, height 0.3s ease, top 0.3s ease, left 0.3s ease";
 
-    function deviceType(){
-        const ua = navigator.userAgent.toLowerCase();
-        const w = window.innerWidth;
-        if(w < 620 || /mobi|android|iphone/.test(ua)) return "phone";
-        if(w < 1200) return "tablet";
-        return "desktop";
-    }
-
-    function applyUltraFit(){
+    function applyContainerSize(){
         const W = window.innerWidth;
         const H = window.innerHeight;
 
-        let safeW = W * 0.85; // همیشه داخل صفحه
-        let safeH = H * 0.85;
+        let safeW = W * 0.95; // همیشه داخل صفحه
+        let safeH = H * 0.95;
 
-        // حفظ نسبت
+        // حفظ نسبت ثابت
         if(safeW / safeH > RATIO) safeW = safeH * RATIO;
         else safeH = safeW / RATIO;
 
-        // محاسبه scale هوشمند نسبت به ابعاد پایه
+        // محاسبه scale نسبت به ابعاد پایه
         const BASE_WIDTH = 480;
-        const BASE_HEIGHT = 850; 
+        const BASE_HEIGHT = 850;
         const scale = Math.min(safeW / BASE_WIDTH, safeH / BASE_HEIGHT);
 
-        // اعمال ابعاد و موقعیت
+        // موقعیت مرکز یا دلخواه
+        const leftPos = (W - BASE_WIDTH * scale) / 2;
+        const topPos  = (H - BASE_HEIGHT * scale) / 2;
+
+        // اعمال اندازه و موقعیت فقط روی container
         container.style.width = BASE_WIDTH + "px";
         container.style.height = BASE_HEIGHT + "px";
+        container.style.position = "absolute";
+        container.style.top = topPos + "px";
+        container.style.left = leftPos + "px";
         container.style.transformOrigin = "top left";
         container.style.transform = `scale(${scale})`;
-
-        // مقیاس محتوای داخلی
-        Array.from(container.children).forEach(el=>{
-            el.style.transformOrigin = "top left";
-            el.style.transform = `scale(${scale})`;
-        });
     }
 
-    window.addEventListener("load", applyUltraFit);
-    window.addEventListener("resize", applyUltraFit);
-    window.addEventListener("orientationchange", applyUltraFit);
+    window.addEventListener("load", applyContainerSize);
+    window.addEventListener("resize", applyContainerSize);
+    window.addEventListener("orientationchange", applyContainerSize);
 })();
 </script>
+
 
 
 
